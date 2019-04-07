@@ -101,7 +101,7 @@ Status LocateElem_Sq(SqList L, int e /*compare*/){
     return j;
 }
 
-Status ListInsert_Sq(SqList *L, int i, int e){
+Status ListInsert_Sq(SqList *L, int i, ElemType e){
     if (i < 0) {
         printf("the i: %d is out of range", i);
         return INFEASIBLE;
@@ -120,6 +120,34 @@ Status ListInsert_Sq(SqList *L, int i, int e){
     
     return OK;
     
+}
+
+Status ListInsert_Sq_2(SqList *L, int i, ElemType e){
+    // the method from the book of yan
+    // similar with the method above
+    if (i < 1 || i > L->length+1) return ERROR; // for i infeasible
+    
+    ElemType *newbase = NULL;
+    ElemType *q = NULL, *p = NULL;
+    
+    if (L->length > L->list_size) {
+        newbase = (ElemType *)realloc(L->elem, (L->list_size + LISTINCREMENT) * sizeof(ElemType));
+        
+        if(!newbase) exit(OVERFLOW);    // error in the space increment
+        L->elem = newbase;
+        L->list_size += LISTINCREMENT;
+    }
+    
+    q = L->elem+i-1;    // pointer q point to the front location of i
+    
+    for (p = L->elem+L->length-1; p >= q; --p) {
+        *(p+1) = *p;    // move the element behind i
+    }
+    
+    *q = e;
+    L->length += 1;
+    
+    return OK;
 }
 
 
@@ -186,7 +214,7 @@ void MergeList(SqList *La, SqList *Lb, SqList *Lc){
 int SqListUse(void) {
     // insert code here...
     
-    /*
+    
     SqList sq_list;
     InitList_Sq(&sq_list);  // init a sq_list
     int len = LIST_INIT_SIZE;
@@ -194,7 +222,7 @@ int SqListUse(void) {
     scanf("%d", &len);
     CreateList_Sq(&sq_list, len);
     Display_Sq(&sq_list);
-    
+    /*
     // test
     ListLength_Sq(sq_list);
     
@@ -218,17 +246,17 @@ int SqListUse(void) {
     ListDelete_Sq(&sq_list, i2, &e3);
     printf("the %dth number you have been deleted is %d", i2, e3);
     Display_Sq(&sq_list);
-    
+    */
     int i3;
     int e4;
     printf("the index of i you want to insert into the list \n");
     scanf("%d", &i3);
     printf("the elem you want to insert\n");
     scanf("%d", &e4);
-    ListInsert_Sq(&sq_list, i3, e4);
+    ListInsert_Sq_2(&sq_list, i3, e4);
     Display_Sq(&sq_list);
      
-     */
+    /*
     
     // try the merge method
     SqList sq_list_a;
@@ -255,5 +283,6 @@ int SqListUse(void) {
     printf("the length of c = \n %d \n", sq_list_c.length);
     Display_Sq(&sq_list_c);
     
+     */
     return 0;
 }
